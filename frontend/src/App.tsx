@@ -25,15 +25,13 @@ function App() {
           <Routes>
             <Route path = "/register" element = {<RegisterPage />} />
             <Route path = "/login" element = {<LoginPage />} />
-            <Route element = {<AdminLayout />}>
-              <Route path = "/admin/users" element = {<UserManagementPage />} />
-            </Route>
             <Route element = {<ProtectedRoute />}>
               <Route path = "/" element = {<HomePage />} />
-
-              {/* <Route element = {<AdminRoute />}> */}
-                
-              {/* </Route> */}
+              <Route element = {<AdminRoute />}>
+                <Route element = {<AdminLayout />}>
+              <Route path = "/admin/users" element = {<UserManagementPage />} />
+            </Route>
+              </Route>
             </Route>
           </Routes>
         </BrowserRouter>

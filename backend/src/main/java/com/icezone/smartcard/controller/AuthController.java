@@ -1,13 +1,5 @@
 package com.icezone.smartcard.controller;
 
-import com.icezone.smartcard.dto.auth.AuthResponseDto;
-import com.icezone.smartcard.dto.auth.LoginRequestDto;
-import com.icezone.smartcard.dto.auth.RegisterRequestDto;
-import com.icezone.smartcard.entity.Role;
-import com.icezone.smartcard.entity.User;
-import com.icezone.smartcard.repository.UserRepository;
-import com.icezone.smartcard.security.JwtProvider;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +12,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.icezone.smartcard.dto.auth.AuthResponseDto;
+import com.icezone.smartcard.dto.auth.LoginRequestDto;
+import com.icezone.smartcard.dto.auth.RegisterRequestDto;
+import com.icezone.smartcard.dto.auth.UserDto;
+import com.icezone.smartcard.entity.Role;
+import com.icezone.smartcard.entity.User;
+import com.icezone.smartcard.repository.UserRepository;
+import com.icezone.smartcard.security.JwtProvider;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,6 +65,18 @@ public class AuthController {
 
         String token = jwtProvider.generateToken(authentication);
 
-        return ResponseEntity.ok(new AuthResponseDto(token));
+        User userEntity = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("无法在数据库中找到此用户"));
+
+        UserDto userDto = new UserDto();
+        userDto.setId(userEntity.getId());
+        userDto.setUsername(userEntity.getUsername());
+        userDto.setRole(userEntity.getRole());
+
+        AuthResponseDto authResponse = new AuthResponseDto();
+        authResponse.setToken(token);
+        authResponse.setUser(userDto);
+
+        return ResponseEntity.ok(authResponse);
     }
 }
