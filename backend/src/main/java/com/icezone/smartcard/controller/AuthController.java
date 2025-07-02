@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.icezone.smartcard.dto.auth.AuthResponseDto;
 import com.icezone.smartcard.dto.auth.LoginRequestDto;
 import com.icezone.smartcard.dto.auth.RegisterRequestDto;
-import com.icezone.smartcard.dto.auth.UserDto;
+import com.icezone.smartcard.dto.user.UserResponseDto;
 import com.icezone.smartcard.entity.Role;
 import com.icezone.smartcard.entity.User;
 import com.icezone.smartcard.repository.UserRepository;
@@ -68,14 +68,14 @@ public class AuthController {
         User userEntity = userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("无法在数据库中找到此用户"));
 
-        UserDto userDto = new UserDto();
-        userDto.setId(userEntity.getId());
-        userDto.setUsername(userEntity.getUsername());
-        userDto.setRole(userEntity.getRole());
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(userEntity.getId());
+        userResponseDto.setUsername(userEntity.getUsername());
+        userResponseDto.setRole(userEntity.getRole());
 
         AuthResponseDto authResponse = new AuthResponseDto();
         authResponse.setToken(token);
-        authResponse.setUser(userDto);
+        authResponse.setUser(userResponseDto);
 
         return ResponseEntity.ok(authResponse);
     }

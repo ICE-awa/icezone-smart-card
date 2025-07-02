@@ -1,6 +1,7 @@
 package com.icezone.smartcard.service;
 
 import com.icezone.smartcard.dto.admin.UserBulkCreateDto;
+import com.icezone.smartcard.dto.user.UserResponseDto;
 import com.icezone.smartcard.entity.Role;
 import com.icezone.smartcard.entity.User;
 import com.icezone.smartcard.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -37,5 +39,12 @@ public class AdminService {
     @Transactional
     public void bulkDeleteUsers(List<String> usernames) {
         userRepository.deleteByUsernameIn(usernames);
+    }
+
+    public List<UserResponseDto> getAllUser() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+            .map(user -> new UserResponseDto(user.getId(), user.getUsername(), user.getRole()))
+            .collect(Collectors.toList());
     }
 }
