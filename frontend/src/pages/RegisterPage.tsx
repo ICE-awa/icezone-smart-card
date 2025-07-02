@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Form, Input, Button, Card, Typography, Row, Col, message} from 'antd';
+import { Form, Input, Button, Card, Typography, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { registerUser } from '../api/auth';
 
@@ -80,7 +80,7 @@ const RegisterPage: React.FC = () => {
                                 注册
                             </Button>
                         </Form.Item>
-
+                        
                         <div style = {{ textAlign: 'center' }}>
                             <Text type = "secondary">已有账号？</Text> <Link to = "/login">前往登录</Link>
                         </div>
