@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/smart_cards_db?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: icezone-sc
+    password: icezone-adm1n
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate: 
+        format_sql: true
+
+app:
+  jwt:
+    secret: dGhpcy1pcy1hLXN1cGVyLWxvbmctYW5kLXNlY3VyZS1zZWNyZXQtZm9yLWp3dC10aGF0LWlzLWRlZmluaXRlbHktb3Zlci0zMi1jaGFycw==
+    expiration-ms: 86400000
