@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Typography, Button, Space, message, Popconfirm } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table';
 import { getUsers, deleteUser } from '../../api/admin';
 import { User } from '../../types/user';
+import UserBulkManager from '../../components/admin/UserBulkManager';
 
 const { Title } = Typography;
 
 const UserManagementPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
+    const [isModalOpen, setIsModalOpen]  = useState(false);
 
     const handleDelete = async (userId: number) => {
         try {
@@ -77,14 +79,18 @@ const UserManagementPage: React.FC = () => {
     }, []);
 
     return (
-        <div>
+        <>
             <Space direction = "vertical" style = {{ width: '100%' }}>
                 <Title level = {2}>用户管理</Title>
                 <div style = {{ marginBottom: 16}}>
                     <Button type = "primary" icon = {<PlusOutlined />}>
                         新增用户
                     </Button>
-                    <Button style = {{ marginLeft: 8 }}>
+                    <Button 
+                        style = {{ marginLeft: 8 }}
+                        icon = {<UploadOutlined />}
+                        onClick = {() => setIsModalOpen(true)}
+                    >
                         批量管理用户
                     </Button>
                 </div>
@@ -96,7 +102,15 @@ const UserManagementPage: React.FC = () => {
                     loading = {loading}
                 />
             </Space>
-        </div>
+
+            <UserBulkManager
+                open = {isModalOpen}
+                onClose = {() => setIsModalOpen(false)}
+                onSuccess = {() => {
+                    fetchUsers();
+                }}
+            />
+        </>
     )
 }
 

@@ -12,7 +12,7 @@ interface BulkAddUserPayload {
     role?: 'USER' | 'ADMIN';
 }
 
-interface BulkDeleteUserPayload {
+export interface BulkDeleteUserPayload {
     usernames: string[];
 }
 
