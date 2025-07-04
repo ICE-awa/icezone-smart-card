@@ -1,17 +1,20 @@
 package com.icezone.smartcard.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.icezone.smartcard.dto.admin.UserAddRequestDto;
 import com.icezone.smartcard.dto.admin.UserBulkCreateDto;
 import com.icezone.smartcard.dto.user.UserResponseDto;
 import com.icezone.smartcard.entity.Role;
 import com.icezone.smartcard.entity.User;
 import com.icezone.smartcard.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
@@ -46,5 +49,30 @@ public class AdminService {
         return users.stream()
             .map(user -> new UserResponseDto(user.getId(), user.getUsername(), user.getRole()))
             .collect(Collectors.toList());
+    }
+
+    public void deleteUserById(Long userId) {
+        User userToDelete = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("ID 为 " + userId + " 的用户不存在"));
+        
+        String currentAdminUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (userToDelete.getUsername().equals(currentAdminUsername)) {
+            throw new IllegalArgumentException("操作失败：管理员不能删除自己！");
+        }
+
+        userRepository.deleteById(userId);
+    }
+
+    public void addUser(UserAddRequestDto requestDto) {
+        if (userRepository.existsByUsername(requestDto.getUsername())) {
+            throw new IllegalArgumentException("用户名 '" + requestDto.getUsername() + "' 已经存在！");
+        }
+        
+        User user = new User();
+        user.setUsername(requestDto.getUsername());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setRole(requestDto.getRole());
+
+        userRepository.save(user);
     }
 }

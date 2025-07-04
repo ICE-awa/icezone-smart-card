@@ -1,15 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Typography, Button, Space, message } from 'antd';
-import { PlusOutlined } from '@ant-design/icons'
+import { Table, Typography, Button, Space, message, Popconfirm } from 'antd';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table';
-import { getUsers } from '../../api/admin';
+import { getUsers, deleteUser } from '../../api/admin';
 import { User } from '../../types/user';
+import UserBulkManager from '../../components/admin/UserBulkManager';
+import AddUserModal from '../../components/admin/AddUserModal';
 
 const { Title } = Typography;
 
 const UserManagementPage: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
+    const [isModalOpen, setIsModalOpen]  = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    const handleDelete = async (userId: number) => {
+        try {
+            await deleteUser(userId);
+            message.success("用户删除成功！");
+            setUsers(currentUsers => currentUsers.filter(user => user.id !== userId));
+        } catch (error) {
+            message.error("删除失败！请稍后重试！");
+        }
+    }
 
     const columns: ColumnsType<User> = [
         {
@@ -34,7 +48,17 @@ const UserManagementPage: React.FC = () => {
             render: (_, record) => (
                 <Space size = "middle">
                     <a>编辑</a>
-                    <a>删除</a>
+                    <Popconfirm
+                        title = "确认删除用户"
+                        description = {`你确认要删除用户 "${record.username} 吗？此操作不可撤销"`}
+                        onConfirm = {() => handleDelete(record.id)}
+                        okText = "确认"
+                        cancelText = "取消"
+                    >
+                        <Button type = "link" danger>
+                            删除
+                        </Button>
+                    </Popconfirm>
                 </Space>
             )
         }
@@ -57,14 +81,22 @@ const UserManagementPage: React.FC = () => {
     }, []);
 
     return (
-        <div>
+        <>
             <Space direction = "vertical" style = {{ width: '100%' }}>
                 <Title level = {2}>用户管理</Title>
                 <div style = {{ marginBottom: 16}}>
-                    <Button type = "primary" icon = {<PlusOutlined />}>
+                    <Button 
+                        type = "primary"
+                        icon = {<PlusOutlined />}
+                        onClick = {() => setIsAddModalOpen(true)}
+                    >
                         新增用户
                     </Button>
-                    <Button style = {{ marginLeft: 8 }}>
+                    <Button 
+                        style = {{ marginLeft: 8 }}
+                        icon = {<UploadOutlined />}
+                        onClick = {() => setIsModalOpen(true)}
+                    >
                         批量管理用户
                     </Button>
                 </div>
@@ -76,7 +108,21 @@ const UserManagementPage: React.FC = () => {
                     loading = {loading}
                 />
             </Space>
-        </div>
+
+            <UserBulkManager
+                open = {isModalOpen}
+                onClose = {() => setIsModalOpen(false)}
+                onSuccess = {() => {
+                    fetchUsers();
+                }}
+            />
+
+            <AddUserModal 
+                open = {isAddModalOpen}
+                onClose = {() => setIsAddModalOpen(false)}
+                onSuccess = {fetchUsers}
+            />
+        </>
     )
 }
 
