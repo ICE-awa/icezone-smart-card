@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.icezone.smartcard.dto.admin.UserAddRequestDto;
 import com.icezone.smartcard.dto.admin.UserBulkCreateDto;
 import com.icezone.smartcard.dto.admin.UserBulkDeleteDto;
 import com.icezone.smartcard.dto.user.UserResponseDto;
@@ -53,6 +54,16 @@ public class AdminController {
         try {
             adminService.deleteUserById(userId);
             return ResponseEntity.ok("ID为 " + userId + " 的用户删除成功！");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/users/add")
+    public ResponseEntity<?> addUser(@Valid @RequestBody UserAddRequestDto requestDto) {
+        try {
+            adminService.addUser(requestDto);
+            return ResponseEntity.ok("用户 '" + requestDto.getUsername() + "' 添加成功！");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

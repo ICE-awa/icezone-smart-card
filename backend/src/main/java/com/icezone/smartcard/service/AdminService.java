@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.icezone.smartcard.dto.admin.UserAddRequestDto;
 import com.icezone.smartcard.dto.admin.UserBulkCreateDto;
 import com.icezone.smartcard.dto.user.UserResponseDto;
 import com.icezone.smartcard.entity.Role;
@@ -60,5 +61,18 @@ public class AdminService {
         }
 
         userRepository.deleteById(userId);
+    }
+
+    public void addUser(UserAddRequestDto requestDto) {
+        if (userRepository.existsByUsername(requestDto.getUsername())) {
+            throw new IllegalArgumentException("用户名 '" + requestDto.getUsername() + "' 已经存在！");
+        }
+        
+        User user = new User();
+        user.setUsername(requestDto.getUsername());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setRole(requestDto.getRole());
+
+        userRepository.save(user);
     }
 }
