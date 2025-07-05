@@ -25,8 +25,11 @@ axiosInstance.interceptors.response.use(
     },
     (error) => {
         if(error.response && error.response.status === 401) {
-            useAuthStore.getState().logout();
-            console.error('认证失败或者 Token 已过期，请重新登陆！');
+            if (window.location.pathname !== '/login') {
+                useAuthStore.getState().logout();
+                console.error('认证失败或者 Token 已过期，请重新登录！');
+                window.location.href = '/login';
+            } 
         }
         return Promise.reject(error);
     }
