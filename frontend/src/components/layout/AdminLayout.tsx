@@ -2,6 +2,7 @@ import React from 'react'
 import { Layout, Menu, Typography } from 'antd'
 import { UserOutlined, DatabaseOutlined } from '@ant-design/icons'
 import { Link, Outlet, useLocation } from 'react-router-dom'
+import UserProfileDropdown from './UserProfileDropdown'
 
 const { Header, Content, Sider, Footer } = Layout;
 const { Title } = Typography;
@@ -27,8 +28,8 @@ const AdminLayout: React.FC = () => {
             </Sider>
 
             <Layout>
-                <Header style = {{ padding: '0 16px', background: '#fff' }}>
-
+                <Header style = {{ padding: '0 16px', background: '#fff', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <UserProfileDropdown />
                 </Header>
                 <Content style = {{ margin: '24px 16px 0' }}>
                     <div style = {{ padding: 24, minHeight: 360, background: '#fff', borderRadius: '8px' }}>
