@@ -11,6 +11,7 @@ import UserManagementPage from './pages/admin/UserManagement';
 import ProtectedRoute from './routes/ProtectedRoute';
 import AdminRoute from './routes/AdminRoute';
 
+import AppLayout from './components/layout/AppLayout';
 import AdminLayout from './components/layout/AdminLayout';
 
 function App() {
@@ -28,14 +29,18 @@ function App() {
             <Route path = "/login" element = {<LoginPage />} />
 
             <Route element = {<ProtectedRoute />}>
-              <Route path = "/" element = {<HomePage />} />
-              <Route path = "/decks/:deckId" element = {<DeckPage />} />
+
+              <Route element = {<AppLayout />}>
+                <Route path = "/" element = {<HomePage />} />
+                <Route path = "/decks/:deckId" element = {<DeckPage />} />
+              </Route>
 
               <Route element = {<AdminRoute />}>
                 <Route element = {<AdminLayout />}>
                   <Route path = "/admin/users" element = {<UserManagementPage />} />
                 </Route>
               </Route>
+              
             </Route>
           </Routes>
         </BrowserRouter>
